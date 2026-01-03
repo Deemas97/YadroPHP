@@ -1496,7 +1496,7 @@ Full license text: [LICENSE](LICENSE)
 
 <div align="center">
   <sub>Built with ❤️ in Russia</sub><br>
-  <sub>YadroPHP © 2024</sub><br>
+  <sub>YadroPHP © 2026</sub><br>
   <sub>Lightweight • Fast • Secure</sub>
 </div>
 ```
