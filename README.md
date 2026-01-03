@@ -68,7 +68,7 @@ cd ваш-проект
 # Настройте окружение
 cp .env.example .env.local
 
-# Отредактируйте .env.local под нужды разработки
+# Отредактируйте .env.example и .env.local под нужды разработки
 # Укажите настройки базы данных, режим работы и т.д.
 ```
 
@@ -97,17 +97,17 @@ php bin/console/jit_manager.php help
 
 #### Ваш первый контроллер
 
-Создайте файл `src/App/Controller/Web/HelloController.php`:
+Создайте файл `src/App/Controller/Web/MainController.php`:
 
 ```php
 <?php
-namespace App\Controller\Web;
+namespace App\Controller;
 
 use Core\Controller\ControllerRendering;
 use Core\Controller\ControllerResponseInterface;
 use Core\Service\Renderer;
 
-class HelloController extends ControllerRendering
+class MainController extends ControllerRendering
 {
     public function __construct(Renderer $renderer)
     {
@@ -116,7 +116,7 @@ class HelloController extends ControllerRendering
 
     public function index(): ControllerResponseInterface
     {
-        return $this->render('hello.html.php', [
+        return $this->render('main.html.php', [
             'message' => 'Привет от YadroPHP!',
             'version' => '1.0.0'
         ]);
@@ -124,14 +124,7 @@ class HelloController extends ControllerRendering
     
     public function apiExample(): ControllerResponseInterface
     {
-        return $this->json([
-            'status' => 'success',
-            'data' => [
-                'framework' => 'YadroPHP',
-                'version' => '1.0.0',
-                'performance' => '3-10ms'
-            ]
-        ]);
+        return $this->initJsonResponse(['success' => true, 'data' => 'Hello World!']);
     }
 }
 ```
@@ -144,13 +137,19 @@ return [
     [
         'path' => '/',
         'http_method' => 'GET',
-        'controller' => 'App\Controller\Web\MainController',
+        'controller' => 'App\Controller\MainController',
         'controller_method' => 'index'
+    ],
+    [
+        'path' => '/api/',
+        'http_method' => 'GET',
+        'controller' => 'App\Controller\MainController',
+        'controller_method' => 'apiExample'
     ],
 ];
 ```
 
-Создайте шаблон `templates/hello.html.php`:
+Создайте шаблон `templates/main.html.php`:
 
 ```php
 <!DOCTYPE html>
@@ -382,10 +381,9 @@ class UserController extends ControllerRendering
     public function index(): ControllerResponseInterface
     {
         $user = $this->auth->getUser();
+        $userId = $this->auth->getUser()->getId();
 
         $dbConnection = $this->dbManager->getConnection();
-
-        $userId = $this->auth->getUser()->getId();
         
         $sqlGetEmployees = "SELECT * FROM employees WHERE id = {$userId} LIMIT 1";
         $result = $dbConnection->query($sqlGetEmployees);
@@ -402,14 +400,7 @@ class UserController extends ControllerRendering
                 'avatar' => $user->getAvatar()
             ],
 
-            'user_data' => $userData,
-
-            'breadcrumbs' => [
-                [
-                    'name'  => 'folder',
-                    'title' => 'Профиль'
-                ]
-            ]
+            'user_data' => $userData
         ];
 
         return $this->render('pages/profile.html.php', $data);
@@ -419,10 +410,9 @@ class UserController extends ControllerRendering
     public function edit(): ControllerResponseInterface
     {
         $user = $this->auth->getUser();
+        $userId = $this->auth->getUser()->getId();
         
         $dbConnection = $this->dbManager->getConnection();
-
-        $userId = $this->auth->getUser()->getId();
         
         $sqlGetEmployees = "SELECT * FROM employees WHERE id = {$userId} LIMIT 1";
         $result = $dbConnection->query($sqlGetEmployees);
@@ -439,19 +429,7 @@ class UserController extends ControllerRendering
                 'avatar' => $user->getAvatar()
             ],
 
-            'user_data' => $userData,
-
-            'breadcrumbs' => [
-                [
-                    'name'  => 'folder',
-                    'title' => 'Профиль',
-                    'link'  => '/profile'
-                ],
-                [
-                    'name'  => 'subfolder_1',
-                    'title' => 'Редактирование'
-                ]
-            ]
+            'user_data' => $userData
         ];
 
         return $this->render('pages/profile_edit.html.php', $data);
@@ -727,14 +705,14 @@ class UserController extends ControllerRendering
 - [x] CLI-инструменты
 - [x] Инструменты разработки
 
-#### Версия 1.1 (Q1 2025)
+#### Версия 1.1 (Q1 2026)
 - [ ] Поддержка PostgreSQL
 - [ ] Очереди задач (Queue)
 - [ ] Отправка email
 - [ ] Расширенная аутентификация (JWT, OAuth2)
 - [ ] GraphQL поддержка
 
-#### Версия 1.2 (Q2 2025)
+#### Версия 1.2 (Q2 2026)
 - [ ] Поддержка Redis
 - [ ] WebSocket сервер
 - [ ] Internationalization (i18n)
@@ -816,9 +794,9 @@ git clone https://github.com/yadrophp/framework.git your-project
 cd your-project
 
 # Configure environment
-cp env.example env.local
+cp .env.example .env.local
 
-# Edit env.local according to your needs
+# Edit .env.example and .env.local according to your needs
 # Set database settings, mode, etc.
 ```
 
@@ -835,29 +813,29 @@ composer create-project yadro/framework your-project
 php -S localhost:8000 -t public
 
 # Or use CLI for project management
-php bin/console/jit_manager.php --optimize
+php bin/console/jit_manager.php optimize
 ```
 
 ##### Production (production mode):
 ```bash
 # Configure web server (Apache/Nginx) to point to public/
-# Set env.local with PRODUCTION mode
-# Enable OPcache and JIT in PHP settings
+# Remove .env.local
+# Enable OPcache, JIT, Gzip in PHP settings
 ```
 
 #### Your First Controller
 
-Create file `src/App/Controller/Web/HelloController.php`:
+Create file `src/App/Controller/Web/MainController.php`:
 
 ```php
 <?php
-namespace App\Controller\Web;
+namespace App\Controller;
 
 use Core\Controller\ControllerRendering;
 use Core\Controller\ControllerResponseInterface;
 use Core\Service\Renderer;
 
-class HelloController extends ControllerRendering
+class MainController extends ControllerRendering
 {
     public function __construct(Renderer $renderer)
     {
@@ -866,7 +844,7 @@ class HelloController extends ControllerRendering
 
     public function index(): ControllerResponseInterface
     {
-        return $this->render('hello.html.php', [
+        return $this->render('main.html.php', [
             'message' => 'Hello from YadroPHP!',
             'version' => '1.0.0'
         ]);
@@ -874,14 +852,7 @@ class HelloController extends ControllerRendering
     
     public function apiExample(): ControllerResponseInterface
     {
-        return $this->json([
-            'status' => 'success',
-            'data' => [
-                'framework' => 'YadroPHP',
-                'version' => '1.0.0',
-                'performance' => '3-10ms'
-            ]
-        ]);
+        return $this->initJsonResponse(['success' => true, 'data' => 'Hello World!']);
     }
 }
 ```
@@ -891,17 +862,22 @@ Add route to `configs/routes.php`:
 ```php
 <?php
 return [
-    'web' => [
-        ['GET', '/hello', 'App\Controller\Web\HelloController::index'],
-        ['GET', '/api/hello', 'App\Controller\Web\HelloController::apiExample'],
+    [
+        'path' => '/',
+        'http_method' => 'GET',
+        'controller' => 'App\Controller\MainController',
+        'controller_method' => 'index'
     ],
-    'api' => [
-        // API routes
-    ]
+    [
+        'path' => '/api/',
+        'http_method' => 'GET',
+        'controller' => 'App\Controller\MainController',
+        'controller_method' => 'apiExample'
+    ],
 ];
 ```
 
-Create template `templates/hello.html.php`:
+Create template `templates/main.html.php`:
 
 ```php
 <!DOCTYPE html>
@@ -928,17 +904,18 @@ Create template `templates/hello.html.php`:
 
 **Layered Architecture:**
 ```
-Bootstrap    → Autoloading, configuration, initialization
-Core         → Framework core (routing, DI, middleware)
-Infrastructure → Infrastructure (DB, cache, file system)
-App          → Your application (controllers, services, models)
+Bootstrap         → Autoloading, configuration, initialization
+Core              → Framework core (routing, DI, middleware)
+Infrastructure    → Infrastructure (DB, cache, file system)
+App               → Your application (controllers, services, models)
+Domain (optional) → Domain layer (DTO, business-logic)
 ```
 
 **Design Patterns:**
 - **Chain of Responsibility:** Middleware component pipeline
 - **Dependency Injection:** Constructor dependency injection
 - **State:** Execution scenario selection (dev/test/production)
-- **Factory:** Object creation through container
+- **Factory:** Object creation through container with ReflectionAPI
 - **Strategy:** Different service implementations
 
 #### 🔒 Security
@@ -949,11 +926,81 @@ App          → Your application (controllers, services, models)
    ```php
    // configs/content_security_policy.php
    return [
-       'default-src' => "'self'",
-       'script-src' => "'self' 'unsafe-inline'",
-       'style-src' => "'self' 'unsafe-inline'",
-       'img-src' => "'self' data: https:",
-   ];
+    'production' => [
+        'default-src' => ["'self'"],
+        
+        'script-src' => [
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            'https://code.jquery.com',
+            'https://unpkg.com',
+            "'nonce-{nonce}'",
+            "'strict-dynamic'"
+        ],
+        
+        'style-src' => [
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            'https://cdnjs.cloudflare.com',
+            'https://fonts.googleapis.com',
+            "'nonce-{nonce}'"
+        ],
+        
+        'img-src' => [
+            "'self'",
+            'data:',
+            'blob:',
+            'https:'
+        ],
+        
+        'font-src' => [
+            "'self'",
+            'data:',
+            'https://fonts.gstatic.com',
+            'https://cdnjs.cloudflare.com'
+        ],
+        
+        'connect-src' => [
+            "'self'",
+            'https://cdn.jsdelivr.net',
+            'https://code.jquery.com'
+        ],
+        
+        'worker-src' => ["'self'", 'blob:'],
+        'child-src' => ["'self'", 'blob:'],
+        'frame-src' => ["'self'"],
+        
+        'frame-ancestors' => ["'none'"],
+        'base-uri' => ["'self'"],
+        'form-action' => ["'self'"],
+        'object-src' => ["'none'"],
+        'manifest-src' => ["'self'"],
+        
+        'report-uri' => ['/csp-report'],
+        'report-to' => ['csp-endpoint']
+    ],
+    
+    'development' => [
+        'default-src' => ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        'script-src' => ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:'],
+        'style-src' => ["'self'", "'unsafe-inline'", 'https:'],
+        'img-src' => ["'self'", 'data:', 'blob:', 'https:'],
+        'font-src' => ["'self'", 'data:', 'https:'],
+        'connect-src' => ["'self'", 'https:'],
+        'worker-src' => ["'self'", 'blob:'],
+        'frame-src' => ["'self'"],
+        'frame-ancestors' => ["'none'"]
+    ],
+    
+    'test' => [
+        'default-src' => ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        'script-src' => ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        'style-src' => ["'self'", "'unsafe-inline'"],
+        'img-src' => ["'self'", 'data:', 'blob:', 'https:'],
+        'font-src' => ["'self'", 'data:', 'https:'],
+        'frame-ancestors' => ["'none'"]
+    ]
+    ];
    ```
 
 2. **CORS (Cross-Origin Resource Sharing)**
@@ -962,17 +1009,17 @@ App          → Your application (controllers, services, models)
    - Preflight request support
 
 3. **CSRF Protection**
-   - Automatic token generation
+   - Token generation
    - All POST/PUT/PATCH/DELETE request validation
    - Form integration
 
 4. **Authentication & Authorization**
-   - JWT or session authentication
+   - Session authentication
    - Role-based access model
    - Method access control attributes
 
 5. **Input Data Protection**
-   - Automatic HTML escaping
+   - HTML and SQL escaping support
    - Data type validation
    - User input sanitization
 
@@ -986,16 +1033,13 @@ App          → Your application (controllers, services, models)
 **Optimizations:**
 
 1. **JIT Compilation (PHP 8.5)**
-   ```php
-   // bin/console/jit_manager.php
-   opcache_compile_file($file); // Pre-compilation
-   ```
+   - Enabling/disabling of precompilation
+   - Speeding up the execution of large parts of the framework
 
 2. **Multi-level Caching**
    - Route cache
    - Template cache
    - Configuration cache
-   - Database query cache
 
 3. **Gzip Compression**
    - Automatic response compression
@@ -1004,8 +1048,7 @@ App          → Your application (controllers, services, models)
 
 4. **Optimized Router**
    - Fast route searching
-   - Route tree caching
-   - Parameter and constraint support
+   - HTTP-methods, parameter and constraint support
 
 #### 🛠️ Developer Tools
 
@@ -1014,13 +1057,10 @@ App          → Your application (controllers, services, models)
 1. **CLI Console**
    ```bash
    # Performance optimization
-   php bin/console/jit_manager.php --optimize
+   php bin/console/jit_manager.php optimize
    
-   # API documentation generation
-   php bin/console/api_doc_generator.php
-   
-   # Cache clearing
-   php bin/console/cache_clear.php
+   # OpCache hot loading
+   php bin/console/preload.php
    ```
 
 2. **Dev Mode Features**
@@ -1029,12 +1069,11 @@ App          → Your application (controllers, services, models)
    - Variable debugger
    - Resource monitoring
 
-3. **Assets Watcher**
+3. **Assets Watcher (coming soon)**
    - Automatic CSS/JS recompilation
    - Hot reload for development
-   - Resource minification
 
-4. **API Documentation Generator**
+4. **API Documentation Generator (coming soon)**
    - Auto-generated documentation
    - Swagger/OpenAPI compatibility
    - Interactive documentation
@@ -1045,66 +1084,82 @@ App          → Your application (controllers, services, models)
 
 ```php
 <?php
-namespace App\Service;
+namespace App\Controller\Web;
 
-use Infrastructure\DataBase\MySQLConnector;
+use Core\Controller\ControllerRendering;
+use Core\Controller\ControllerResponseInterface;
+use Core\Security\AuthAttribute;
+use Core\Service\Renderer;
+use Core\Service\AuthService;
 use Core\Service\DBConnectionManager;
 
-class UserService
+class UserController extends ControllerRendering
 {
-    private MySQLConnector $db;
-    
-    public function __construct(DBConnectionManager $dbManager)
+    public function __construct(
+        Renderer $renderer,
+        private AuthService $auth,
+        private DBConnectionManager $dbManager
+    )
     {
-        $this->db = $dbManager->getConnection('default');
+        parent::__construct($renderer);
     }
-    
-    public function getUsers(int $limit = 10): array
-    {
-        $query = "SELECT id, username, email FROM users 
-                  WHERE active = 1 
-                  ORDER BY created_at DESC 
-                  LIMIT ?";
-        
-        return $this->db->executePrepared($query, [$limit]);
-    }
-    
-    public function createUser(array $data): int
-    {
-        $query = "INSERT INTO users (username, email, password_hash) 
-                  VALUES (?, ?, ?)";
-        
-        return $this->db->executePrepared(
-            $query, 
-            [
-                $data['username'],
-                $data['email'],
-                password_hash($data['password'], PASSWORD_BCRYPT)
-            ]
-        );
-    }
-}
-```
 
-**Migrations:**
-```php
-// Example migration
-class CreateUsersTable
-{
-    public function up(MySQLConnector $db): void
+    #[AuthAttribute(table: 'employees', roles: ['admin', 'manager'], status: 'active')]
+    public function index(): ControllerResponseInterface
     {
-        $db->execute("
-            CREATE TABLE users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(50) NOT NULL UNIQUE,
-                email VARCHAR(100) NOT NULL UNIQUE,
-                password_hash VARCHAR(255) NOT NULL,
-                active BOOLEAN DEFAULT TRUE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-                             ON UPDATE CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-        ");
+        $user = $this->auth->getUser();
+        $userId = $this->auth->getUser()->getId();
+
+        $dbConnection = $this->dbManager->getConnection();
+        
+        $sqlGetEmployees = "SELECT * FROM employees WHERE id = {$userId} LIMIT 1";
+        $result = $dbConnection->query($sqlGetEmployees);
+
+        $userData = $result[0];
+
+        $data = [
+            'title' => 'Профиль',
+            'company_name' => 'YadroPHP',
+            'user_session' => [
+                'role' => $user->getRole(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'avatar' => $user->getAvatar()
+            ],
+
+            'user_data' => $userData
+        ];
+
+        return $this->render('pages/profile.html.php', $data);
+    }
+
+    #[AuthAttribute(table: 'employees', roles: ['admin', 'manager'], status: 'active')]
+    public function edit(): ControllerResponseInterface
+    {
+        $user = $this->auth->getUser();
+        $userId = $this->auth->getUser()->getId();
+        
+        $dbConnection = $this->dbManager->getConnection();
+        
+        $sqlGetEmployees = "SELECT * FROM employees WHERE id = {$userId} LIMIT 1";
+        $result = $dbConnection->query($sqlGetEmployees);
+
+        $userData = $result[0];
+
+        $data = [
+            'title' => 'Профиль',
+            'company_name' => 'YadroPHP',
+            'user_session' => [
+                'role' => $user->getRole(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'avatar' => $user->getAvatar()
+            ],
+
+            'user_data' => $userData
+        ];
+
+        return $this->render('pages/profile_edit.html.php', $data);
     }
 }
 ```
@@ -1297,19 +1352,7 @@ class CreateUsersTable
             └── profiles/ # Performance profiles
 ```
 
-### 🎯 Comparison with Other Frameworks
-
-| Feature | YadroPHP | Laravel | Symfony | Slim |
-|---------|----------|---------|---------|------|
-| **Core Size** | ~500 KB | ~30 MB | ~40 MB | ~2 MB |
-| **Init Time** | 1-3 ms | 50-100 ms | 70-150 ms | 5-10 ms |
-| **Memory Usage** | 5-15 MB | 40-80 MB | 50-100 MB | 10-25 MB |
-| **PHP Version Required** | 8.5+ | 8.1+ | 8.2+ | 8.0+ |
-| **Built-in Security** | CSP, CORS, CSRF | Basic | Basic | Minimal |
-| **JIT Support** | Yes (optimized) | Yes | Yes | No |
-| **Russian Support** | Direct | Community | Community | Community |
-
-### 📚 Documentation
+### 📚 Documentation (coming soon)
 
 Full documentation is available at: [yadrophp.ru](https://yadrophp.ru)
 
@@ -1362,7 +1405,7 @@ Full documentation is available at: [yadrophp.ru](https://yadrophp.ru)
    - Interfaces
    - Extensions
 
-### 🤝 Support and Community
+### 🤝 Support and Community (coming soon)
 
 #### Official Channels:
 - **🌐 Official Website:** [yadrophp.ru](https://yadrophp.ru)
@@ -1393,30 +1436,19 @@ Full documentation is available at: [yadrophp.ru](https://yadrophp.ru)
 - [x] CLI tools
 - [x] Development tools
 
-#### Version 1.1 (Q1 2024)
+#### Version 1.1 (Q1 2026)
 - [ ] PostgreSQL support
 - [ ] Task queues (Queue)
 - [ ] Email sending
 - [ ] Extended authentication (JWT, OAuth2)
 - [ ] GraphQL support
-- [ ] Docker images
-- [ ] Unit test coverage 80%
 
-#### Version 1.2 (Q2 2024)
+#### Version 1.2 (Q2 2026)
 - [ ] Redis support
 - [ ] WebSocket server
-- [ ] Microservice architecture
 - [ ] Monitoring and metrics
 - [ ] Internationalization (i18n)
-- [ ] Admin panel generator
-
-#### Version 2.0 (Q3 2024)
-- [ ] PHP 8.6+ support
-- [ ] Fibers support
-- [ ] AI integrations
-- [ ] Modular architecture
-- [ ] Package marketplace
-- [ ] Full English documentation
+- [ ] English language documentation
 
 ### 👥 Contributing
 
