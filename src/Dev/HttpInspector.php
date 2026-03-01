@@ -12,7 +12,7 @@ class HttpInspector
     public static function init(): void
     {
         self::$enabled = DotEnv::getDataItem('DEV_HTTP_LOGGING', '0') === '1';
-        self::$logDir = YADRO_PHP__ROOT_DIR . '/var/log/dev/http/';
+        self::$logDir = YADRO_PHP__LOGS_DIR . '/dev/http/';
         
         if (self::$enabled && !is_dir(self::$logDir)) {
             mkdir(self::$logDir, 0755, true);

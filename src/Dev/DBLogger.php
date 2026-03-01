@@ -16,7 +16,7 @@ class DBLogger implements LoggerInterface
     public static function init(): void
     {
         self::$enabled = DotEnv::getDataItem('DEV_SQL_LOGGING', '0') === '1';
-        self::$logFile = YADRO_PHP__ROOT_DIR . '/var/log/dev/queries_' . date('Y-m-d') . '.log';
+        self::$logFile = YADRO_PHP__LOGS_DIR . '/dev/queries_' . date('Y-m-d') . '.log';
     }
     
     public static function logQuery(

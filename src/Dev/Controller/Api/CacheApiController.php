@@ -4,7 +4,7 @@ namespace Dev\Controller\Api;
 use Core\Controller\ControllerAbstract;
 use Core\Controller\ControllerResponseInterface;
 use Core\Security\AuthAttribute;
-use Infrastructure\Service\DevModeManager;
+use Dev\DevModeManager;
 use RuntimeException;
 
 class CacheApiController extends ControllerAbstract
@@ -20,7 +20,7 @@ class CacheApiController extends ControllerAbstract
     public function apiClearCache(): ControllerResponseInterface
     {
         try {
-            $cacheDir = YADRO_PHP__ROOT_DIR . '/var/cache/dev';
+            $cacheDir = YADRO_PHP__CACHE_DIR . '/dev';
             $this->clearDirectory($cacheDir);
 
             return $this->initJsonResponse([

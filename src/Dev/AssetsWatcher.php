@@ -15,7 +15,7 @@ class AssetsWatcher
     public static function init(): void
     {
         self::$enabled = DotEnv::getDataItem('DEV_ASSET_WATCHER', '0') === '1';
-        self::$cacheFile = YADRO_PHP__ROOT_DIR . '/var/cache/dev/asset_hashes.json';
+        self::$cacheFile = YADRO_PHP__CACHE_DIR . '/dev/asset_hashes.json';
         
         if (self::$enabled) {
             self::loadHashes();
@@ -33,12 +33,12 @@ class AssetsWatcher
     private static function setupWatchedPaths(): void
     {
         self::$watchedPaths = [
-            YADRO_PHP__ROOT_DIR . '/src/Domain' => ['php'],
-            YADRO_PHP__ROOT_DIR . '/src/App' => ['php'],
-            YADRO_PHP__ROOT_DIR . '/src/Infrastructure' => ['php'],
-            YADRO_PHP__ROOT_DIR . '/src/Core' => ['php'],
-            YADRO_PHP__ROOT_DIR . '/src/Bootstrap' => ['php'],
-            YADRO_PHP__ROOT_DIR . '/configs' => ['php', 'json'],
+            YADRO_PHP__SRC_DIR .  '/Domain' => ['php'],
+            YADRO_PHP__SRC_DIR .  '/App' => ['php'],
+            YADRO_PHP__SRC_DIR .  '/Infrastructure' => ['php'],
+            YADRO_PHP__SRC_DIR .  '/Core' => ['php'],
+            YADRO_PHP__SRC_DIR .  '/Bootstrap' => ['php'],
+            YADRO_PHP__CONFIGS_DIR => ['php', 'json'],
             YADRO_PHP__ROOT_DIR . '/templates' => ['php', 'html'],
             YADRO_PHP__ROOT_DIR . '/public/assets' => ['js', 'css', 'scss'],
         ];
@@ -94,7 +94,7 @@ class AssetsWatcher
     
     private static function logChange(string $filepath): void
     {
-        $relativePath = str_replace(YADRO_PHP__ROOT_DIR . '/', '', $filepath);
+        $relativePath = str_replace(YADRO_PHP__ROOT_DIR . DIRECTORY_SEPARATOR, '', $filepath);
         $logEntry = sprintf(
             "[%s] File changed: %s\n",
             date('Y-m-d H:i:s'),
@@ -102,7 +102,7 @@ class AssetsWatcher
         );
         
         file_put_contents(
-            YADRO_PHP__ROOT_DIR . '/var/log/dev/hot_reload.log',
+            YADRO_PHP__LOGS_DIR . '/dev/hot_reload.log',
             $logEntry,
             FILE_APPEND
         );
@@ -114,7 +114,7 @@ class AssetsWatcher
             opcache_reset();
         }
         
-        $templateCache = YADRO_PHP__ROOT_DIR . '/var/cache/templates';
+        $templateCache = YADRO_PHP__CACHE_DIR . '/templates';
         if (is_dir($templateCache)) {
             array_map('unlink', glob($templateCache . '/*'));
         }
@@ -147,7 +147,7 @@ class AssetsWatcher
                     $previousHash = self::$fileHashes[$filepath] ?? null;
                     
                     if ($previousHash !== $currentHash) {
-                        $relativePath = str_replace(YADRO_PHP__ROOT_DIR . '/', '', $filepath);
+                        $relativePath = str_replace(YADRO_PHP__ROOT_DIR . DIRECTORY_SEPARATOR, '', $filepath);
                         $changedFiles[] = [
                             'file' => $relativePath,
                             'size' => $file->getSize(),
@@ -192,7 +192,6 @@ class AssetsWatcher
             .then(r => r.json())
             .then(data => {
                 if (data.changed && data.files.length > 0) {
-                    console.log('Files changed:', data.files);
                     if (confirm('Code was updated. Reload page?')) {
                         location.reload();
                     }

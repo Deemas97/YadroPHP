@@ -1,7 +1,7 @@
 <?php
 namespace Dev;
 
-use Infrastructure\Service\DevModeManager;
+use Dev\DevModeManager;
 
 class Dumper
 {

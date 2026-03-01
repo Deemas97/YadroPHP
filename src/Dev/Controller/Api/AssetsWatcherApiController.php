@@ -4,7 +4,7 @@ namespace Dev\Controller\Api;
 use Core\Controller\ControllerAbstract;
 use Core\Controller\ControllerResponseInterface;
 use Dev\AssetsWatcher;
-use Infrastructure\Service\DevModeManager;
+use Dev\DevModeManager;
 
 class AssetsWatcherApiController extends ControllerAbstract
 {

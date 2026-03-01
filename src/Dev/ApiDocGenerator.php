@@ -29,7 +29,7 @@ class ApiDocGenerator
     
     private static function scanControllers(): void
     {
-        $controllersPath = YADRO_PHP__ROOT_DIR . '/src/App/Controller';
+        $controllersPath = YADRO_PHP__SRC_DIR . '/App/Controller';
         
         if (!is_dir($controllersPath)) {
             return;
@@ -273,7 +273,7 @@ class ApiDocGenerator
         
         $docs = [
             'generated_at' => date('Y-m-d H:i:s'),
-            'project' => \Bootstrap\Config\DotEnv::getDataItem('APP_NAME', 'Zero-PHP'),
+            'project' => \Bootstrap\Config\DotEnv::getDataItem('APP_NAME', 'YadroPHP'),
             'version' => '1.0',
             'base_url' => \Bootstrap\Config\DotEnv::getDataItem('APP_URL', ''),
             'controllers' => self::$controllers,

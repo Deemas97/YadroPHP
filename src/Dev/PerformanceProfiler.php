@@ -13,7 +13,7 @@ class PerformanceProfiler
     public static function init(): void
     {
         self::$enabled = DotEnv::getDataItem('DEV_PERFORMANCE_PROFILING', '0') === '1';
-        self::$profileDir = YADRO_PHP__ROOT_DIR . '/var/log/dev/profiles/';
+        self::$profileDir = YADRO_PHP__LOGS_DIR . '/dev/profiles/';
         
         if (self::$enabled && !is_dir(self::$profileDir)) {
             mkdir(self::$profileDir, 0755, true);
