@@ -87,7 +87,7 @@ php -S localhost:8000 -t public
 php bin/console/jit_manager.php help
 ```
 
-##### Продакшн (production mode):
+##### Продакшен (production mode):
 ```bash
 # Настройте веб-сервер (Apache/Nginx) на директорию public/
 # Удалите .env.local
@@ -157,7 +157,7 @@ return [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($message) ?></title>
-    <link rel="stylesheet" href="/assets/css/app.css">
+    <link rel="stylesheet" href="<?= YADRO_PHP__ASSETS_DIR ?>/css/app.css">
 </head>
 <body>
     <div class="container">
@@ -178,7 +178,7 @@ return [
 Bootstrap            → Автозагрузка, конфигурация, инициализация
 Core                 → Ядро фреймворка (роутинг, DI, middleware)
 Infrastructure       → Инфраструктура (БД, кэш, файловая система)
-App                  → Ваше приложение (контроллеры, сервисы, модели)
+App                  → Ваше приложение (контроллеры, сервисы, компоненты)
 Domain (опционально) → Предметная область (DTO, бизнес-логика)
 ```
 
@@ -312,7 +312,7 @@ Domain (опционально) → Предметная область (DTO, б
    - Ускорение выполнения объемных частей фреймворка
 
 2. **Многоуровневое кэширование**
-   - Кэш путей исполняемых файлов
+   - Кэш байт-кода (OpCache)
    - Кэш конфигураций
    - Кэш шаблонов
 
@@ -492,43 +492,11 @@ class UserController extends ControllerRendering
 
 #### Официальные каналы:
 - **🌐 Официальный сайт:** [yadrophp.ru](https://yadrophp.ru)
-- **📦 Packagist:** [yadro/framework](https://packagist.org/packages/yadro/framework)
-- **🐙 GitHub:** [github.com/yadrophp](https://github.com/yadrophp)
+- **🐙 GitHub:** [github.com/yadrophp](https://github.com/Deemas97/YadroPHP)
 
 #### Сообщества:
 - **💬 VK сообщество:** [vk.com/yadrophp](https://vk.com/yadrophp)
-- **📱 Telegram канал:** [@yadrophp](https://t.me/yadrophp)
 - **📚 Документация:** [docs.yadrophp.ru](https://docs.yadrophp.ru/docs)
-
-#### Поддержка разработки:
-- **🐛 Баг-репорты:** [GitHub Issues](https://github.com/yadrophp/framework/issues)
-- **💡 Запросы функций:** [GitHub Discussions](https://github.com/YadroPHP/framework/discussions)
-- **👥 Контрибьютинг:** [CONTRIBUTING.md](CONTRIBUTING.md)
-
-### 🛣️ Roadmap
-
-#### Версия 1.1.0 (Текущая)
-- [x] MVC каркас
-- [x] Маршрутизация
-- [x] DI-контейнер
-- [x] Middleware-конвейер
-- [x] Безопасность (CSP, CORS, CSRF, Subresource Integrity)
-- [x] Работа с БД
-- [x] Шаблонизация
-- [x] Кэширование
-- [x] CLI-инструменты
-- [x] Инструменты разработки
-
-#### Версия 1.1.* (Q1 2026)
-- [ ] Поддержка PostgreSQL
-- [ ] GraphQL поддержка
-- [ ] Очереди задач (Queue)
-- [ ] Отправка email
-- [ ] Расширенная аутентификация (JWT, OAuth2)
-
-#### Версия 1.2 (Q2 2026)
-- [ ] Поддержка Redis, RabbitMQ
-- [ ] Полная документация на английском
 
 ### 👥 Участие в разработке
 
